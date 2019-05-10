@@ -6,21 +6,25 @@ import json
 # From:To 
 #Remember that 'normal' is used instead of '0' for some reason. 
 #They should be strings. 
-rotate_transitions={
+sway_screen_rotate_transitions={
 'normal':'90',
 '90':'normal'
 }
 
-# Get active monitor info.
-# It seems to come in as a json list of lists, with the outermost list corresponding 
-# individual monitors. So we use a bit of an ugly hack -- loading, peeling off the outermost level, then 
-# dumping that to a string an re-loading  it. Silly but it works. 
-for monitor in json.loads(os.popen('swaymsg -t get_outputs').read()):
-	if json.loads(json.dumps(monitor))['active']==True:
-                # Print the command to be run. 
-		print('swaymsg output ' + monitor['name'] + ' transform ' + rotate_transitions[monitor['transform']])
-                # Print actually run it. 
-		print(os.popen('swaymsg output ' + monitor['name'] + ' transform ' + rotate_transitions[monitor['transform']]).read())
-		exit()
 
-print("Could not find an active monitor? Sorry.")
+def sway_screen_rotate(transitions):
+    # Get active monitor info.
+    # It seems to come in as a json list of lists, with the outermost list corresponding 
+    # individual monitors. So we use a bit of an ugly hack -- loading, peeling off the outermost level, then 
+    # dumping that to a string an re-loading  it. Silly but it works. 
+    for monitor in json.loads(os.popen('swaymsg -t get_outputs').read()):
+        if json.loads(json.dumps(monitor))['active']==True:
+            # Print the command to be run. 
+            print('swaymsg output ' + monitor['name'] + ' transform ' + transitions[monitor['transform']])
+            # Actually run it by issuing a command using swaymsg. 
+            print(os.popen('swaymsg output ' + monitor['name'] + ' transform ' + transitions[monitor['transform']]).read())
+            return
+    print("Could not find an active monitor? Sorry.")
+
+if __name__ == "__main__":
+    sway_screen_rotate(sway_screen_rotate_transitions)  
