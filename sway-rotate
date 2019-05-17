@@ -44,7 +44,7 @@ def sway_screen_rotate(transitions):
     # individual monitors. So we use a bit of an ugly hack -- loading, peeling off the outermost level, then 
     # dumping that to a string an re-loading  it. Silly but it works. 
     for monitor in json.loads(os.popen('swaymsg -t get_outputs').read()):
-        if json.loads(json.dumps(monitor))['active']==True:
+        if json.loads(json.dumps(monitor))['focused']==True:
             # Print the command to be run. 
             print('swaymsg output ' + monitor['name'] + ' transform ' + transitions[monitor['transform']])
             # Actually run it by issuing a command using swaymsg. 
